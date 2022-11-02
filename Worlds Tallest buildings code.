@@ -1,0 +1,145 @@
+//Sets the variables for all the data that will be needed for the code.
+var name = getColumn("World's Tallest Buildings", "Name");
+var rank = getColumn("World's Tallest Buildings", "Rank");
+var height = getColumn("World's Tallest Buildings", "Height");
+var place = getColumn("World's Tallest Buildings", "Country");
+var pic = getColumn("World's Tallest Buildings", "Image");
+
+//sets the lists up that will be filled when the transversals are made.
+var filteredName = [];
+var filteredRank = [];
+var filteredHeight  =  [];
+var filteredPlace = [];
+var filteredPic = [] ;
+// These list are simple and for the top 5 tallest buildings in 4 countries screens
+
+var usList = [];
+var chinaList = [];
+var uaeList = [];
+var malaysiaList = [];
+//This sequence will clear the previous data from the "Countryscreen". 
+//Without it all the code would stay and break the code by causing the stuff to become unreadable
+onEvent("gobutton", "click", function( ) {
+removeItem(filteredName, 0);
+removeItem(filteredRank, 0);
+removeItem(filteredHeight, 0);
+removeItem(filteredPlace, 0);
+removeItem(filteredPic, 0);
+  filter();
+  update();
+});
+
+// All of these on Event buttons are for the "fourCountries" Screen.
+// They use traversals to find the tallest buildings in the four countries than output them
+onEvent("U.S", "click", function( ) {
+  for (var i = 0; i < 28; i++) {
+    if (place[i]== "United States") {
+       appendItem(usList, name[i]);
+      
+    }
+   
+  }
+   setText("Out1", usList[0]);
+      setText("Out2", usList[1]);
+      setText("Out3", usList[2]);
+      setText("Out4", usList[3]);
+      setText("Out5", usList[4]);
+}
+);
+
+ 
+ 
+
+onEvent("China", "click", function() {
+  for (var i = 0; i < place.length; i++) {
+    if (place[i] == "China"){
+      appendItem(chinaList, name[i]);
+    }
+  }
+  setText("Out1", chinaList[0]);
+      setText("Out2", chinaList[1]);
+      setText("Out3", chinaList[2]);
+      setText("Out4", chinaList[3]);
+      setText("Out5", chinaList[4]);
+}
+);
+
+onEvent("Malaysia", "click", function(){
+  for (var i = 0; i < place.length; i++) {
+    if (place[i] == "Malaysia"){
+      appendItem(malaysiaList, name[i]);
+    }
+  }
+  setText("Out1", malaysiaList[0]);
+      setText("Out2", malaysiaList[1]);
+      setText("Out3", malaysiaList[2]);
+      setText("Out4","not available" );
+      setText("Out5","not available" );
+}
+);
+
+onEvent("U.A.E", "click", function(){
+  for (var i = 0; i < place.length; i++) {
+    if (place[i] == "United Arab Emirates"){
+      appendItem(uaeList, name[i]);
+    }
+  }
+  setText("Out1", uaeList[0]);
+      setText("Out2", uaeList[1]);
+      setText("Out3", uaeList[2]);
+      setText("Out4", uaeList[3]);
+      setText("Out5", uaeList[4]);
+}
+);
+// These are the UI buttons that takle you to the screen you want to go to
+onEvent("rankButton", "click", function( ) {
+setScreen("countryScreen");
+});
+
+onEvent("countryButton", "click", function( ) {
+  setScreen("fourCountries");
+  
+});
+
+
+onEvent("homeButton1", "click", function( ) {
+  homescreen();
+});
+
+ onEvent("homeButton2", "click", function( ) {
+    homescreen();
+  });
+ // This is the filter function that uses traversals to gather the information that will be displayed.
+ function filter() {
+  for (var i = 0; i < rank.length; i++) {
+    if (getNumber("rankInput")== i ) {
+      appendItem(filteredName, name[i]);
+      appendItem(filteredRank, rank[i]);
+      appendItem(filteredPlace, place[i]);
+      appendItem(filteredHeight, height[i]);
+      appendItem(filteredPic, pic[i]);
+      
+      
+    }
+  }
+ }
+ 
+  function homescreen() {
+ setScreen("homeScreen");
+   
+    
+  }
+  //This is the update screen function that displays all the information you are looking for.
+function update() {
+  setProperty("pic", "image", filteredPic);
+  setText("displayName", filteredName);
+  showElement("displayName");
+   setText("displayRank", filteredRank);
+  showElement("displayRank");
+   setText("displayHeight", filteredHeight);
+  showElement("displayHeight");
+   setText("displayPlace", filteredPlace);
+  showElement("displayPlace");
+  
+}
+
