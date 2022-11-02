@@ -1,0 +1,150 @@
+// March 7th 2022 I designed the first two screens being home screen and quiz screen
+// March 9th I designed results screen and scoreboard and began to code
+//March 11th I coded and realized there was a logic problem so I restarted coding.
+// March 16th I finished up with all of the functions and variables and finished my code.
+
+
+
+//Sets up the variables to store all the data needed.
+// Sets up variables for all the lists.
+var questionNumber = 0;
+var picture = getColumn("qanda", "pictures");
+var randomvalue = "value";
+var answerlist = [];
+var guesslist = [];
+var name1 = "";
+var continentquizanswers = getColumn("qanda", "answers");
+var continentquizquestions = getColumn("qanda", "questions");
+var questionsAsked = [];
+var right = 0;
+var previousScores = [0, 0, 0, 0, 0, 0];
+// Sets up a random number so that the questions can be randomized.
+random();
+
+// Makes it so that the restart button at the end of the quiz resets all the variable
+// When The button is clicked it restarts the quiz
+onEvent("restart", "click", function( ) {
+appendItem(previousScores, right);
+setScreen("homeScreen");  
+questionNumber = 0;
+answerlist = [];  
+guesslist = [];  
+name1 = "";
+questionsAsked = [];
+right = 0;
+setText("congratulations", "maybe next time");
+
+});
+
+
+
+// Starts the quiz with a new questions
+onEvent("7continentsquiz", "click", function( ) {
+  name1 = getText("nameInput");
+ newQuestion();
+});
+
+
+// When this button is clicked it will check to see if you put the correct answer in the answer box
+// This will also reset the answerbox
+onEvent("submitAnswerButton", "click", function( ) {
+  answercheck(getText("answerBox"));
+  setText("answerBox", "");
+  
+});
+
+
+// When the nextButton is clicked this will check if 5 questions have already been asked
+//If so than it will take you to the results screen
+// If not it will give you a new question
+onEvent("nextButton", "click", function( ) {
+  questionNumber++;
+  if (questionNumber >= 5) {
+    setScreen("resultsScreen");
+    displayScore();
+  } else {
+    random();
+    newQuestion();
+  }
+});
+
+
+// This just makes sure when the button is cicked it will call the Highscore function
+onEvent("SBButton", "click", function( ) {
+  setScreen("Scoreboard");
+  highScore(name1, right);
+});
+// Assigns a random value to random so that all of the lists can be on the same index
+function random(){
+  randomvalue  = (randomNumber(0, continentquizanswers.length - 1));
+}
+
+// Checks to see if you have gotten the right anwse. If so you score or things you got right will go up
+function answercheck (answer){
+  setScreen("correctOrFalse");
+  if (answer == continentquizanswers[randomvalue]) {
+    setProperty("checkmark", "image", "icon://fa-check-square");
+    setProperty("correctLabel", "text", "Correct!");
+    setProperty("answerwas", "text", "The Answer was " + continentquizanswers[randomvalue]);
+    guessAnswers(answer);
+     for (var i = 0; i < continentquizanswers.length; i++) {
+        if (continentquizanswers[i] == continentquizanswers[randomvalue]) {
+        setProperty("picture", "image", picture[i]);
+        }
+    }
+    right++;
+  } else { 
+    setProperty("checkmark", "image", "icon://fa-times");
+    setProperty("correctLabel", "text", "False :(");
+    setProperty("answerwas", "text", "The Answer was " + continentquizanswers[randomvalue]);
+    guessAnswers(answer);
+    for (var iI = 0; iI < continentquizanswers.length; iI++) {
+        if (continentquizanswers[iI] == continentquizanswers[randomvalue]) {
+        setProperty("picture", "image", picture[iI]);
+        }
+    }
+  }
+}
+
+
+// This will just give you a new question if you already answered one
+function newQuestion (){
+  setScreen("quizScreen");
+  
+setProperty("questionArea","text",continentquizquestions[randomvalue]);
+appendItem(questionsAsked,continentquizquestions[randomvalue] );
+}
+
+// This functions checks to see if you have a highscore or not
+// It checks the previous scores and names associated with them to see if you got one
+function highScore(name, score) {
+  for (var i = 0; i < 5; i++){
+ if (score > previousScores[i]) {
+   insertItem(previousScores, i, score);
+  setProperty("makeIt", "text","You got a high score" );
+   setText("congratulations", "congratulations " + name + " You got a high score of " + previousScores[0]);
+ 
+ 
+ 
+ } else { 
+  setProperty("makeIt", "text","Try Harder" );
+ }
+  }
+    }
+  // This takes the information from guessist and answer list to display what you got right nd what the correct 
+  //answer actually was.
+  
+  function displayScore(){
+  setText("resultheading", "You got " + right + " out of 5");
+  setText("r1", "Guess - " + guesslist[0] + "\n" + "Correct answer - " + questionsAsked[0]);
+  setText("r2", "Guess - " + guesslist[1] + "\n" + "Correct answer - " + questionsAsked[1]);
+  setText("r3", "Guess - " + guesslist[2] + "\n" + "Correct answer - " + questionsAsked[2]);
+  setText("r4", "Guess - " + guesslist[3] + "\n" + "Correct answer - " + questionsAsked[3]);
+  setText("r5", "Guess - " + guesslist[4] + "\n" + "Correct answer - " + questionsAsked[4]);
+  }
+  
+  // Adds your guesses and the corresponding correct anwer to the list  So that they can be displayed later
+  function guessAnswers(answer) {
+  appendItem(guesslist, answer);
+  appendItem(answerlist,continentquizanswers[randomvalue]);
+}
